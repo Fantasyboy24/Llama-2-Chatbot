@@ -2,16 +2,6 @@
     "sqltools.connections": [
         {
             "previewLimit": 50,
-            "server": "localhost",
-            "port": 5432,
-            "askForPassword": true,
-            "driver": "PostgreSQL",
-            "name": "llama_db",
-            "database": "llama_db",
-            "username": "postgres"
-        },
-        {
-            "previewLimit": 50,
             "server": "llama-test-db.cmh2xpy9adng.af-south-1.rds.amazonaws.com",
             "port": 5432,
             "driver": "PostgreSQL",
