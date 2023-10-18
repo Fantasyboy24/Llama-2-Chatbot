@@ -11,6 +11,9 @@ import uvicorn
 import os
 import requests
 
+from dotenv import load_dotenv
+load_dotenv('.env')
+
 # Initialize FastAPI app
 app = FastAPI()
 
@@ -24,7 +27,8 @@ class DocumentModel(Base):
     docid = Column(String)
 
 # Create the database engine and session
-DATABASE_URL = "postgresql+psycopg2://llama_user:zRn9ZZTS@llama-test-db.cmh2xpy9adng.af-south-1.rds.amazonaws.com:5432/llama_db"
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -58,7 +62,7 @@ async def upload_file(
             embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
             CONNECTION_STRING = (
-                "postgresql+psycopg2://llama_user:zRn9ZZTS@llama-test-db.cmh2xpy9adng.af-south-1.rds.amazonaws.com:5432/llama_db"
+                DATABASE_URL
             )
 
             db_vector = PGVector.from_documents(
@@ -86,7 +90,7 @@ async def upload_file(
         embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
         CONNECTION_STRING = (
-            "postgresql+psycopg2://llama_user:zRn9ZZTS@llama-test-db.cmh2xpy9adng.af-south-1.rds.amazonaws.com:5432/llama_db"
+            DATABASE_URL
         )
 
         db_vector = PGVector.from_documents(
@@ -129,7 +133,7 @@ async def upload_url(
         embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
         CONNECTION_STRING = (
-            "postgresql+psycopg2://llama_user:zRn9ZZTS@llama-test-db.cmh2xpy9adng.af-south-1.rds.amazonaws.com:5432/llama_db"
+            DATABASE_URL
         )
 
         db_vector = PGVector.from_documents(

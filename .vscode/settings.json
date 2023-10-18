@@ -9,6 +9,16 @@
             "database": "llama_db",
             "username": "llama_user",
             "password": "zRn9ZZTS"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "local_llm",
+            "database": "vectordb",
+            "username": "testuser",
+            "password": "testpwd"
         }
     ]
 }
