@@ -44,8 +44,30 @@ async def upload_file(
     file: UploadFile = File(...),
 ):
     try:
+
         # Read the uploaded file directly
         uploaded_file_content = await file.read()
+
+        # Determine the loader based on loader_type
+        if loader_type == "csv":
+            folder_name = "csv"
+            # Create the folder if it doesn't exist
+            os.makedirs(folder_name, exist_ok=True)
+            file_path = os.path.join(folder_name, file.filename)
+        elif loader_type == "pdf":
+            folder_name = "pdf"
+            os.makedirs(folder_name, exist_ok=True)
+            file_path = os.path.join(folder_name, file.filename)
+        elif loader_type == "text":
+            folder_name = "text"
+            os.makedirs(folder_name, exist_ok=True)
+            file_path = os.path.join(folder_name, file.filename)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid loader_type")
+
+        # Save the uploaded file to the appropriate folder
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file_content)
 
         # Determine the loader based on loader_type
         if loader_type == "csv":
@@ -56,7 +78,7 @@ async def upload_file(
         elif loader_type == "text":  # For "text" loader, use the uploaded file content
             loader = TextLoader(f'text/{file.filename}', encoding="UTF-8")
             documents = loader.load()
-            text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+            text_splitter = CharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
             docs = text_splitter.split_documents(documents)
 
             embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -65,7 +87,7 @@ async def upload_file(
                 DATABASE_URL
             )
 
-            db_vector = PGVector.from_documents(
+            PGVector.from_documents(
                 embedding=embeddings,
                 documents=docs,
                 collection_name=collection_name,  # Use the provided collection_name
@@ -79,13 +101,14 @@ async def upload_file(
             db.commit()
             db.refresh(doc)
             db.close()
-
+            os.remove(file_path)
             return {"message": "File uploaded successfully", "user_id": user_id, "docid": collection_name}
         else:
             raise HTTPException(status_code=400, detail="Invalid loader_type")
 
         documents = loader.load()
-
+        text_splitter = CharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
+        docs = text_splitter.split_documents(documents)
 
         embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
@@ -93,7 +116,7 @@ async def upload_file(
             DATABASE_URL
         )
 
-        db_vector = PGVector.from_documents(
+        PGVector.from_documents(
             embedding=embeddings,
             documents=documents,
             collection_name=collection_name,  # Use the provided collection_name
@@ -107,7 +130,7 @@ async def upload_file(
         db.commit()
         db.refresh(doc)
         db.close()
-
+        os.remove(file_path)
         return {"message": "File uploaded successfully", "user_id": user_id, "docid": collection_name}
     except Exception as e:
         print(f"Error: {str(e)}")
@@ -127,7 +150,7 @@ async def upload_url(
         loader = SeleniumURLLoader(urls=url_content)
 
         documents = loader.load()
-        text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=200)
+        text_splitter = CharacterTextSplitter(chunk_size=1024, chunk_overlap=64)
         docs = text_splitter.split_documents(documents)
 
         embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -136,7 +159,7 @@ async def upload_url(
             DATABASE_URL
         )
 
-        db_vector = PGVector.from_documents(
+        PGVector.from_documents(
             embedding=embeddings,
             documents=docs,
             collection_name=collection_name,  # Use the provided collection_name
@@ -157,4 +180,4 @@ async def upload_url(
         raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000,reload=True)
