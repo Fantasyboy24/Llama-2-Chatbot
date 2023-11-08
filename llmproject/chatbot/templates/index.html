@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Index Page Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* CSS styles for the spinner */
+        .spinner-container {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .rounded-square {
+            border-radius: 20px;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 500px; /* Added max-width property */
+        }
+
+        /* Color palette */
+        .first-color {
+            background: #5585b5;
+            color: white;
+        }
+
+        .second-color {
+            background: #53a8b6;
+            color: white;
+        }
+
+        .third-color {
+            background: #79c2d0;
+            color: white;
+        }
+
+        .fourth-color {
+            background: #bbe4e9;
+            color: #000;
+        }
+
+        /* Set the background for the body as a gradient */
+        body {
+            background: linear-gradient(to top, #5585b5, #53a8b6, #79c2d0, #bbe4e9);
+        }
+
+        /* Add smooth hover effect to the container */
+        .rounded-square {
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .rounded-square:hover {
+            transform: scale(1.05);
+        }
+
+        /* Style the form-group input bars */
+        .form-group input[type="text"],
+        .form-group input[type="file"],
+        .form-group select {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0; /* Add margin for spacing */
+        }
+
+        /* Style links as buttons */
+        .button-link {
+            display: block;
+            padding: 10px;
+            min-width: 100px; /* Set a minimum width for the buttons */
+            margin: 0 auto; /* Center the buttons horizontally */
+            margin-top: 10px; /* Add spacing between the buttons */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #000;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+
+        .button-link:hover {
+            background-color: #53a8b6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="container rounded-square fourth-color text-dark p-4">
+        <h1 class="text-center">Llama 2 Chatbot</h1>
+
+        {% if request.user.is_authenticated %}
+          <h1 class="text-center">Welcome {{ request.user.username }}!</h1>
+          <a href="{% url 'upload' %}" class="button-link">Upload File</a>
+          <a href="{% url 'search' %}" class="button-link">Add Search Content</a>
+          <a href="{% url 'show_llama2_form' %}" class="button-link">Chat with LLama2</a>
+          <a href="{% url 'logout' %}" class="button-link">Logout</a>
+        {% else %}
+          <h1 class="text-center">Welcome!</h1>
+          <a href="{% url 'login' %}" class="button-link">Login</a>
+          <a href="{% url 'signup' %}" class="button-link">Signup</a>
+        {% endif %}
+
+        <!-- Spinner container -->
+        <div class="spinner-container" id="spinner-container">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Display success or error messages -->
+        <div id="message-container" style="display: none;"></div>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                document.querySelector('button[type="submit"]').setAttribute('disabled', 'disabled');
+                document.getElementById('spinner-container').style.display = 'block';
+
+                // Simulate a delay (replace with actual processing logic)
+                setTimeout(function () {
+                    document.querySelector('button[type="submit"]').removeAttribute('disabled');
+                    document.getElementById('spinner-container').style.display = 'none';
+
+                    // Display a success message
+                    const messageContainer = document.getElementById('message-container');
+                    messageContainer.style.display = 'block';
+                    messageContainer.innerHTML = '<p style="color: green;">Form submitted successfully!</p>';
+                }, 2000);
+            });
+        </script>
+    </div>
+</body>
+</html>
