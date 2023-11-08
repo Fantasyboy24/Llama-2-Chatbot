@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Depends, Response
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -12,6 +12,7 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.llms import CTransformers
 from langchain.chains import RetrievalQA
 from duckduckgo_search import DDGS
+from sqlalchemy.orm import Session
 import pandas as pd
 import uvicorn
 import os
@@ -31,6 +32,11 @@ class LlamaRequest(BaseModel):
     config: dict
     model_name: str
 
+class UpdateDataRequest(BaseModel):
+    user_id: int
+    collection_name: str
+    new_name: str
+
 # Initialize FastAPI app
 app = FastAPI()
 
@@ -42,6 +48,10 @@ class DocumentModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer)
     docid = Column(String)
+# Define a Pydantic model to receive the data for updating a collection
+class UpdateCollection(BaseModel):
+    new_name: str
+    user_id: int
 
 # Create the database engine and session
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -210,10 +220,16 @@ async def upload_url(
         # Delete the CSV file
         if os.path.exists(f'csv/{csv_filename}'):
             os.remove(f'csv/{csv_filename}')
-        return {"message": "Search content uploaded successfully", "user_id": user_id, "docid": query}
+        # Serialize the DataFrame to JSON
+        data_json = data.to_json(orient="records")
+
+        # Return the JSON response
+        return Response(content=data_json, media_type="application/json")
+
     except Exception as e:
         print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 #similarity search for results in the database
 @app.post("/similarity_search/")
 async def similarity_search(
@@ -241,6 +257,24 @@ async def similarity_search(
         print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/view_docids_by_user_id/")
+async def view_docids_by_user_id(user_id: int):
+    try:
+        # Create a database session
+        db = SessionLocal()
+
+        # Query the database for docids by user_id
+        docids = db.query(DocumentModel.docid).filter(DocumentModel.user_id == user_id).all()
+        docids = [item[0] for item in docids]  # Extract docids from the query result
+
+        # Close the database session
+        db.close()
+
+        return {"docids": docids}
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
 # Modify the /delete_collection/ endpoint to perform the additional deletions
 @app.delete("/delete_collection/")
 async def delete_collection(collection_name: str):
@@ -306,12 +340,13 @@ async def llama2(request_data: LlamaRequest):
         )
 
         # Perform the query
-        result = qa_chain({"query": query})
+        result = qa_chain.run(query)
         
-        return {"response": qa_chain({"query": query})}
+        return {"response": result}
     except Exception as e:
         print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000,reload=True)

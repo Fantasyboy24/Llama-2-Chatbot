@@ -13,7 +13,6 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-Base = declarative_base()
 
 class DocumentModel(Base):
     __tablename__ = "documents"
@@ -26,6 +25,7 @@ class CollectionModel(Base):
     uuid = Column(String, primary_key=True)
     name = Column(String)
     cmetadata = Column(String)
+    
 
 class EmbeddingModel(Base):
     __tablename__ = "langchain_pg_embedding"
