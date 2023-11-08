@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Rounded square styles */
+        .rounded-square {
+            border-radius: 20px;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 500px; /* Added max-width property */
+        }
+
+        /* Color palette */
+        .first-color {
+            background: #5585b5;
+            color: white;
+        }
+
+        .second-color {
+            background: #53a8b6;
+            color: white;
+        }
+
+        .third-color {
+            background: #79c2d0;
+            color: white;
+        }
+
+        .fourth-color {
+            background: #bbe4e9;
+            color: #000;
+        }
+
+        /* Set the background for the body as a gradient */
+        body {
+            background: linear-gradient(to top, #5585b5, #53a8b6, #79c2d0, #bbe4e9);
+        }
+
+        /* Add smooth hover effect to the container */
+        .rounded-square {
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .rounded-square:hover {
+            transform: scale(1.05);
+        }
+
+        /* Center the form elements */
+        .form-group {
+            text-align: center;
+        }
+
+        /* Style the form-group input bars */
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            width: 50%; /* Set a specific width for the input fields */
+        }
+
+        .form-group label {
+            display: block;
+            text-align: center; /* Center-align the labels */
+            margin-bottom: 5px; /* Reduce the margin between labels and inputs */
+        }
+
+        /* Style buttons as links */
+        .button-link {
+            display: block;
+            padding: 10px;
+            width: 150px; /* Set a width for the buttons */
+            margin: 20px auto; /* Center the buttons horizontally and add spacing */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #000;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .button-link:hover {
+            background-color: #53a8b6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="container rounded-square fourth-color text-dark p-4">
+        <h1 class="text-center">Signup</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                {{ form.username }}
+                <small id="usernameHelp" class="form-text text-muted">Required. 150 characters or fewer. Letters, digits, and @/./+/-/_ only.</small>
+            </div>
+            <div class="form-group">
+                <label for="password1">Password:</label>
+                {{ form.password1 }}
+                <small id="passwordHelp" class="form-text text-muted">Your password must contain at least 8 characters.</small>
+            </div>
+            <div class="form-group">
+                <label for="password2">Password confirmation:</label>
+                {{ form.password2 }}
+                <small id="password2Help" class="form-text text-muted">Enter the same password as before, for verification.</small>
+            </div>
+            <button type="submit" class="button-link">Signup</button>
+            <a href="{% url 'login' %}" class="button-link">Already have an account?</a>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+DROP TABLE documents,langchain_pg_collection,langchain_pg_embedding;

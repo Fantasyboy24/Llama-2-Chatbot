@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FastAPI Request Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* CSS styles for the spinner */
+        .spinner-container {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .rounded-square {
+            border-radius: 20px;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 500px; /* Added max-width property */
+            background-color: #bbe4e9; /* Set background color of the rounded square */
+        }
+
+        /* Color palette */
+        .first-color {
+            background: #5585b5;
+            color: white;
+        }
+
+        .second-color {
+            background: #53a8b6;
+            color: white;
+        }
+
+        .third-color {
+            background: #79c2d0;
+            color: white;
+        }
+
+        .fourth-color {
+            background: #bbe4e9;
+            color: #000;
+        }
+
+        /* Set the background for the body as a gradient */
+        body {
+            background: linear-gradient(to top, #5585b5, #53a8b6, #79c2d0, #bbe4e9);
+        }
+
+        /* Add smooth hover effect to the container */
+        .rounded-square {
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .rounded-square:hover {
+            transform: scale(1.05);
+        }
+
+        /* Style the form-group input bars */
+        .form-group input[type="text"],
+        .form-group input[type="file"],
+        .form-group select {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0; /* Add margin for spacing */
+            width: 100%; /* Make the form inputs take up the full width */
+        }
+
+        /* Style links as buttons */
+        .button-link {
+            display: block;
+            padding: 10px;
+            min-width: 100px; /* Set a minimum width for the buttons */
+            margin: 0 auto; /* Center the buttons horizontally */
+            margin-top: 10px; /* Add spacing between the buttons */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #000;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .button-link:hover {
+            background-color: #53a8b6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container rounded-square fourth-color text-dark p-4">
+        <h1 class="text-center">Llama 2 Chatbot</h1>
+        <form method="POST" action="{% url 'call_fastapi_llama2' %}">
+            {% csrf_token %}
+            <label for="collection_name">Collection Name:</label>
+            <input type="text" name="collection_name" id="collection_name" value="{{ form_settings.collection_name }}"><br>
+
+            <label for="max_new_tokens">Max New Tokens:</label>
+            <input type="text" name="max_new_tokens" id="max_new_tokens" value="{{ form_settings.max_new_tokens }}"><br>
+
+            <label for="repetition_penalty">Repetition Penalty:</label>
+            <input type="text" name="repetition_penalty" id="repetition_penalty" value="{{ form_settings.repetition_penalty }}"><br>
+
+            <label for="temperature">Temperature:</label>
+            <input type="text" name="temperature" id="temperature" value="{{ form_settings.temperature }}"><br>
+
+            <label for="gpu_layers">GPU Layers:</label>
+            <input type="text" name="gpu_layers" id="gpu_layers" value="{{ form_settings.gpu_layers }}"><br>
+
+            <label for="context_length">Context Length:</label>
+            <input type="text" name="context_length" id="context_length" value="{{ form_settings.context_length }}"><br>
+
+            <label for="model_name">Model Name:</label>
+            <input type="text" name="model_name" id="model_name" value="{{ form_settings.model_name }}"><br>
+
+            <label for="k">Search k Value:</label>
+            <input type="text" name="k" id="k" value="{{ form_settings.k }}"><br>
+
+            <label for="user_query">User Query:</label>
+            <input type="text" name="user_query" id="user_query"><br>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div>
+        {% if conversation %}
+            <h2>Conversation:</h2>
+            <ul>
+                {% for entry in conversation %}
+                    <li>
+                        <strong>{{ entry.role }}:</strong> {{ entry.content }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

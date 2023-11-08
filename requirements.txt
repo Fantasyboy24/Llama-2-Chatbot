@@ -1,0 +1,17 @@
+fastapi
+sqlalchemy
+langchain
+uvicorn
+pydantic
+sentence-transformers
+python-dotenv ==0.15.0
+pgvector
+psycopg2 
+psycopg2-binary
+python-multipart
+unstructured
+transformers
+selenium
+pydantic
+langchainhub
+ctransformers

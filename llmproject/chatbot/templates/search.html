@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search and Upload Content</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Rounded square styles */
+        .rounded-square {
+            border-radius: 20px;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 500px; /* Added max-width property */
+        }
+
+        /* Color palette */
+        .first-color {
+            background: #5585b5;
+            color: white;
+        }
+
+        .second-color {
+            background: #53a8b6;
+            color: white;
+        }
+
+        .third-color {
+            background: #79c2d0;
+            color: white;
+        }
+
+        .fourth-color {
+            background: #bbe4e9;
+            color: #000;
+        }
+
+        /* Set the background for the body as a gradient */
+        body {
+            background: linear-gradient(to top, #5585b5, #53a8b6, #79c2d0, #bbe4e9);
+        }
+
+        /* Add smooth hover effect to the container */
+        .rounded-square {
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .rounded-square:hover {
+            transform: scale(1.05);
+        }
+
+        /* Center the form elements */
+        .form-group {
+            text-align: center;
+        }
+
+        /* Style the form-group input bars */
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="file"] {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            width: 50%; /* Set a specific width for the input fields */
+        }
+
+        .form-group label {
+            display: block;
+            text-align: center; /* Center-align the labels */
+            margin-bottom: 5px; /* Reduce the margin between labels and inputs */
+        }
+
+        /* Style buttons as links */
+        /* Updated button styles */
+        .button-link {
+            display: block;
+            padding: 8px; /* Reduce the padding for smaller buttons */
+            width: 100px; /* Reduce the width for smaller buttons */
+            margin: 15px auto; /* Adjust the margin for centering and spacing */
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #000;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+
+        .button-link:hover {
+            background-color: #53a8b6;
+            color: white;
+        }
+
+        /* Style the table for search results */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #5585b5;
+            color: white;
+        }
+
+        /* Add some space between table rows */
+        tr {
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="container rounded-square fourth-color text-dark p-4">
+        <h2 class="text-center">Search and Upload Content</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+            <button type="submit" class="button-link">Search and Upload</button>
+        </form>
+
+        <!-- Display search results in a table only if search_results is not empty -->
+        {% if search_results %}
+        <h3 class="text-center">Search Results</h3>
+        <div id="search-results">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Body</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in search_results %}
+                        <tr>
+                            <td>{{ result.title }}</td>
+                            <td>{{ result.body }}</td>
+                            <td><a href="{{ result.href }}" target="_blank">Link</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
